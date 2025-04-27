@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Mandalefruta.com</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="images/fruit.png" type="image/png">
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/toastitv1.0.modern.min.css">
+    <script src="js/productos.js"></script>
+    <script src="js/toastitv1.0.min.js"></script>
+    <script  type="module" src="js/fetchProducts.js"></script>
+    <script type="module" defer src="js/main.js"></script>
+</head>
+<body>
+    <header>
+        <div class="header">
+            <div class="titles">
+                <h1>mandalefruta.com</h1>
+                <h2>Tu tienda sana y natural.</h2>
+            </div>
+            <div class="shoping-cart">
+                <img src="images/shopping-cart-32.png" alt="Carrito">
+            </div>
+        </div>
+    </header>
+    <main>
+        <article>
+            <search class="search-bar">
+                <input type="search" id="inputSearch" autocomplete="off" placeholder="Producto a buscar... 🔎">
+            </search>
+        </article>
+        <article class="categories">
+            <span class="category">Todos</span>
+            <!-- Otras categorías -->
+        </article>
+        <article>
+
+            <div class="card-container">
+            
+                <div class="loader">
+                    <div class="spinner"></div>
+                </div>
+            
+            </div>
+
+        </article>
+    </main>
+    <footer>
+
+        <div class="footer">
+            <h3>Copyright © 2023 - <span>2025</span> | Fernando Luna para ISTEA</h3>
+        </div>
+        
+    </footer>
+    <div id="arrow-up" class="arrow-style hide-arrow">
+        <img src="images/up-arrow.png" title="Ir arriba" alt="Ir arriba">
+    </div>
+    <!-- TAG SCRIPT -->
+</body>
+</html>
