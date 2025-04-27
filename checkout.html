@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Mandalefruta.com | Checkout</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="images/fruit.png" type="image/png">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/toastitv1.0.modern.min.css">
+    <script src="js/toastitv1.0.min.js"></script>
+    <script defer src="js/checkout.js"></script>
+</head>
+<body>
+    <header>
+        <div class="header">
+            <div class="titles">
+                <h1>mandalefruta.com</h1>
+                <h2>Finaliza la compra de tus productos</h2>
+            </div>
+        </div>
+    </header>
+    <main>
+        <article>
+            <div class="checkout">
+                <h2>Confirma por favor tu compra:</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Nombre</th>
+                            <th>Precio</th>
+                            <th>Quitar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr>
+                            <td id="pImagen"></td>
+                            <td id="nombre"></td>
+                            <td id="precio"></td>
+                            <td id="delButton" 
+                                data-codigo="" 
+                                title="Click para eliminar">
+                                ⛔️
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td></td>
+                            <td>Total:</td>
+                            <td id="totalPrice">$ <span>0.00</span></td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <div class="buttons-buy"> 
+                <button id="btnReturn" title="Vuelve a comprar">VOLVER</button>
+                <button id="btnBuy" disabled title="Confirma la compra">COMPRAR</button>
+            </div>
+        </article>
+    </main>
+    <footer>
+        
+    </footer>
+</body>
+</html>
