@@ -2,60 +2,66 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Mandalefruta.com</title>
+    <title>mandalefruta.com</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="images/fruit.png" type="image/png">
+    <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/toastitv1.0.modern.min.css">
+
     <script src="js/productos.js"></script>
     <script src="js/toastitv1.0.min.js"></script>
-    <script  type="module" src="js/fetchProducts.js"></script>
+    <script type="module" src="js/fetchProducts.js"></script>
     <script type="module" defer src="js/main.js"></script>
 </head>
 <body>
-    <header>
-        <div class="header">
-            <div class="titles">
-                <h1>mandalefruta.com</h1>
-                <h2>Tu tienda sana y natural.</h2>
+    <header class="bg-success text-white py-3">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="h3 m-0">mandalefruta.com</h1>
+                <p class="m-0">Tu tienda sana y natural.</p>
             </div>
-            <div class="shoping-cart">
-                <img src="images/shopping-cart-32.png" alt="Carrito">
+            <div>
+                <img src="images/shopping-cart-32.png" alt="Carrito" class="img-fluid">
             </div>
         </div>
     </header>
-    <main>
-        <article>
-            <search class="search-bar">
-                <input type="search" id="inputSearch" autocomplete="off" placeholder="Producto a buscar... 🔎">
-            </search>
-        </article>
-        <article class="categories">
-            <span class="category">Todos</span>
-            <!-- Otras categorías -->
-        </article>
-        <article>
 
-            <div class="card-container">
-            
-                <div class="loader">
-                    <div class="spinner"></div>
+    <main class="container my-4">
+        <!-- Buscador -->
+        <div class="mb-4">
+            <input type="search" id="inputSearch" class="form-control" placeholder="Producto a buscar... 🔎" autocomplete="off">
+        </div>
+
+        <!-- Categorías -->
+        <div class="mb-4">
+            <span class="badge bg-primary me-2">Todos</span>
+            <!-- Otras categorías podrían agregarse aquí -->
+        </div>
+
+        <!-- Contenedor de tarjetas de productos -->
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 card-container">
+            <!-- Loader (opcional) -->
+            <div class="col-12 text-center loader">
+                <div class="spinner-border text-success" role="status">
+                    <span class="visually-hidden">Cargando...</span>
                 </div>
-            
             </div>
 
-        </article>
-    </main>
-    <footer>
-
-        <div class="footer">
-            <h3>Copyright © 2023 - <span>2025</span> | Fernando Luna para ISTEA</h3>
+            <!-- Aquí se inyectarán dinámicamente las cards desde JS -->
         </div>
-        
+    </main>
+
+    <footer class="bg-light text-center py-3">
+        <p class="mb-0">Copyright © 2023 - <span>2025</span> | Fernando Luna para ISTEA</p>
     </footer>
-    <div id="arrow-up" class="arrow-style hide-arrow">
-        <img src="images/up-arrow.png" title="Ir arriba" alt="Ir arriba">
+
+    <!-- Flecha para subir -->
+    <div id="arrow-up" class="position-fixed bottom-0 end-0 m-3 hide-arrow" style="cursor:pointer;">
+        <img src="images/up-arrow.png" title="Ir arriba" alt="Ir arriba" style="width:40px;">
     </div>
-    <!-- TAG SCRIPT -->
+
+    <!-- BOOTSTRAP JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
