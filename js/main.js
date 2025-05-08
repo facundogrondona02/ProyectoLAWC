@@ -1,5 +1,6 @@
 // IMPORTS
 import { fetchProducts } from './fetchProducts.js'
+import { fetchProductsCategories } from './fetchProductsCategories.js'
 
 // DOM: enlaces y variables globales
 const categorias = []
@@ -7,64 +8,10 @@ const carrito = []
 const container = document.querySelector('div.card-container')
 const buttonCarrito = document.querySelector('img[alt="Carrito"]')
 const inputSearch = document.querySelector('input#inputSearch')
-
+const filterCategories = document.querySelector('div.categories-filter')
 let data = [] // importante definirla arriba
-
-// function abrirModal() {
-//     return
-//     `
-//       <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Open modal for @mdo</button>
-// <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@fat">Open modal for @fat</button>
-// <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@getbootstrap">Open modal for @getbootstrap</button>
-
-// <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-//   <div class="modal-dialog">
-//     <div class="modal-content">
-//       <div class="modal-header">
-//         <h5 class="modal-title" id="exampleModalLabel">New message</h5>
-//         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-//       </div>
-//       <div class="modal-body">
-//         <form>
-//           <div class="mb-3">
-//             <label for="recipient-name" class="col-form-label">Recipient:</label>
-//             <input type="text" class="form-control" id="recipient-name">
-//           </div>
-//           <div class="mb-3">
-//             <label for="message-text" class="col-form-label">Message:</label>
-//             <textarea class="form-control" id="message-text"></textarea>
-//           </div>
-//         </form>
-//       </div>
-//       <div class="modal-footer">
-//         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-//         <button type="button" class="btn btn-primary">Send message</button>
-//       </div>
-//     </div>
-//   </div>
-// </div>
-//       `
-// }
-// // LÓGICA
-// function crearCardHTML(producto) {
-//     return `<div class="col">
-//                 <div class="card h-100">
-//                 <button class="modal" ></button>
-//                 <div class="card-header text-center abrirModal">
-//                     <img src="${producto.image}" class="card-img-top p-3" alt="${producto.title}" style="max-height: 200px; object-fit: contain;">
-//                     <div class="card-body d-flex flex-column">
-//                         <h5 class="card-title">${producto.title}</h5>
-//                         <p class="card-text fw-bold">$${producto.price}</p>
-//                         <button class="btn btn-success mt-auto buttonComprar" data-codigo="${producto.id}">COMPRAR</button>
-//                     </div>
-//                     </div>
-//                 </div>
-//             </div>`
-// }
-
-
-
-
+let dataCategories = [] // importante definirla arriba
+let categoriaSeleccion = ""
 
 function crearCardHTML(producto) {
     return `
@@ -122,6 +69,21 @@ const modalTemplate = (producto) => {
     </div>
     `
 }
+function llenarFiltroCategorias(categoria) {
+    return (
+        `
+        <select class="form-select" id="selectCategorias" aria-label="Default select example">
+            <option ${categoriaSeleccion === "" ? "selected" : ""}>Seleccione una categoría</option>
+            ${categoria.map((cat) => 
+                `<option value="${cat}" ${categoriaSeleccion === cat ? "selected" : ""}>${cat}</option>`
+            ).join('')}
+        </select>
+        `
+    )
+}
+
+
+
 
 function crearCardError() {
     return `<div class="col-12">
@@ -172,9 +134,16 @@ function recuperarCarrito() {
     }
 }
 
-function cargarProductos(arrayProductos) {
+function cargarProductos(arrayProductos, categorias) {
     const loader = document.querySelector('.loader')
-    if (loader) loader.remove()
+    if (loader) loader.remove() 
+
+        console.log(categorias, "categorias")
+         
+        if(categorias.length > 0) {
+            filterCategories.innerHTML = llenarFiltroCategorias(categorias)
+        }
+
 
     if (arrayProductos.length > 0) {
         container.innerHTML = ''
@@ -197,17 +166,37 @@ inputSearch.addEventListener('search', () => {
     )
 
     if (productosEncontrados.length > 0) {
-        cargarProductos(productosEncontrados)
+        cargarProductos(productosEncontrados, dataCategories)
     } else {
         alert('🔎 No se encontraron coincidencias.')
     }
 })
 
+
+filterCategories.addEventListener('change', (event) => {
+    const categoriaSeleccionada = event.target.value;
+    console.log("Categoría seleccionada:", categoriaSeleccionada);
+
+    categoriaSeleccion = categoriaSeleccionada // Guardar la categoría seleccionada para usarla en el filtro de búsqueda
+    console.log("Categoría seleccion:", categoriaSeleccion);
+    let productosEncontrados = data.filter((producto) =>
+        producto.category.toLowerCase().includes(categoriaSeleccionada.toLowerCase())
+    )
+    if (productosEncontrados.length > 0) {
+        cargarProductos(productosEncontrados, dataCategories)
+    } else {
+        alert('🔎 No se encontraron coincidencias.')
+    }
+
+    // Acá podés filtrar productos o hacer lo que necesites con la categoría
+});
+
 // FUNCIÓN PRINCIPAL
 async function iniciarApp() {
     try {
+        dataCategories= await fetchProductsCategories()
         data = await fetchProducts()
-        cargarProductos(data)
+        cargarProductos(data, dataCategories)
         recuperarCarrito()
     } catch (error) {
         console.error('Error iniciando la app:', error)
