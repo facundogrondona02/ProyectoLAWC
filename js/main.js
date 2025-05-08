@@ -185,7 +185,7 @@ filterCategories.addEventListener('change', (event) => {
     if (productosEncontrados.length > 0) {
         cargarProductos(productosEncontrados, dataCategories)
     } else {
-        alert('🔎 No se encontraron coincidencias.')
+        cargarProductos(data, dataCategories) // Si no hay productos en la categoría seleccionada, mostrar todos los productos
     }
 
     // Acá podés filtrar productos o hacer lo que necesites con la categoría
