@@ -12,6 +12,10 @@ const filterCategories = document.querySelector('div.categories-filter')
 let data = [] // importante definirla arriba
 let dataCategories = [] // importante definirla arriba
 let categoriaSeleccion = ""
+let arrayDeFiltros = [
+   {producto: "", categoria: ""},
+] 
+
 
 function crearCardHTML(producto) {
     return `
@@ -158,37 +162,47 @@ function cargarProductos(arrayProductos, categorias) {
     }
 }
 
-// EVENTOS
-inputSearch.addEventListener('search', () => {
-    let valor = inputSearch.value.trim().toLowerCase()
-    let productosEncontrados = data.filter((producto) =>
-        producto.title.toLowerCase().includes(valor)
-    )
+function filtrarProductos() {
+    let productosFiltrados = data
 
-    if (productosEncontrados.length > 0) {
-        cargarProductos(productosEncontrados, dataCategories)
-    } else {
-        alert('🔎 No se encontraron coincidencias.')
+    // Filtro por producto
+    if (arrayDeFiltros[0].producto !== "") {
+        productosFiltrados = productosFiltrados.filter((producto) =>
+            producto.title.toLowerCase().includes(arrayDeFiltros[0].producto)
+        )
     }
+
+    // Filtro por categoría
+    if (arrayDeFiltros[0].categoria !== "" && arrayDeFiltros[0].categoria !== "Seleccione una categoría") {
+        productosFiltrados = productosFiltrados.filter((producto) =>
+            producto.category.toLowerCase().includes(arrayDeFiltros[0].categoria.toLowerCase())
+        )
+    }
+
+    if (productosFiltrados.length > 0) {
+        cargarProductos(productosFiltrados, dataCategories)
+    } else {
+        mostrarToast(`'no se encontro el producto`, 'error')
+        cargarProductos(data, dataCategories) // o mostrar el mensaje de error
+    }
+}
+
+
+
+
+// EVENTOS
+inputSearch.addEventListener('input', (event) => {
+    console.log(event.target.value)
+    arrayDeFiltros[0].producto = inputSearch.value.trim().toLowerCase() 
+    filtrarProductos()
+
 })
 
 
 filterCategories.addEventListener('change', (event) => {
-    const categoriaSeleccionada = event.target.value;
-    console.log("Categoría seleccionada:", categoriaSeleccionada);
-
-    categoriaSeleccion = categoriaSeleccionada // Guardar la categoría seleccionada para usarla en el filtro de búsqueda
-    console.log("Categoría seleccion:", categoriaSeleccion);
-    let productosEncontrados = data.filter((producto) =>
-        producto.category.toLowerCase().includes(categoriaSeleccionada.toLowerCase())
-    )
-    if (productosEncontrados.length > 0) {
-        cargarProductos(productosEncontrados, dataCategories)
-    } else {
-        cargarProductos(data, dataCategories) // Si no hay productos en la categoría seleccionada, mostrar todos los productos
-    }
-
-    // Acá podés filtrar productos o hacer lo que necesites con la categoría
+    arrayDeFiltros[0].categoria = event.target.value 
+    categoriaSeleccion = event.target.value
+    filtrarProductos()
 });
 
 // FUNCIÓN PRINCIPAL
