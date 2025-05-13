@@ -182,7 +182,7 @@ function filtrarProductos() {
     if (productosFiltrados.length > 0) {
         cargarProductos(productosFiltrados, dataCategories)
     } else {
-        mostrarToast(`'no se encontro el producto`, 'error')
+        mostrarToast(`no se encontro el producto`, 'error')
         cargarProductos(data, dataCategories) // o mostrar el mensaje de error
     }
 }
