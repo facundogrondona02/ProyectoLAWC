@@ -123,6 +123,8 @@ function agregarEventosClick() {
 function guardarCarrito() {
     if (carrito.length > 0) {
         localStorage.setItem('shoppingKart', JSON.stringify(carrito))
+    } else {
+        localStorage.removeItem('shoppingKart')
     }
 }
 
@@ -200,6 +202,53 @@ function actualizarSidebarCarrito() {
             </div>
         </div>
     `).join('')
+
+    // Agregar eventos a los botones del carrito después de renderizar
+    agregarEventosBotonesCarrito()
+}
+
+function agregarEventosBotonesCarrito() {
+    // Botones para sumar cantidad
+    const botonesSumar = document.querySelectorAll('.btn-sumar')
+    botonesSumar.forEach(boton => {
+        boton.addEventListener('click', () => {
+            const id = boton.dataset.id
+            const producto = carrito.find(item => item.id == id)
+            if (producto) {
+                producto.cantidad++
+                guardarCarrito()
+                actualizarSidebarCarrito()
+            }
+        })
+    })
+
+    // Botones para restar cantidad
+    const botonesRestar = document.querySelectorAll('.btn-restar')
+    botonesRestar.forEach(boton => {
+        boton.addEventListener('click', () => {
+            const id = boton.dataset.id
+            const producto = carrito.find(item => item.id == id)
+            if (producto && producto.cantidad > 1) {
+                producto.cantidad--
+                guardarCarrito()
+                actualizarSidebarCarrito()
+            }
+        })
+    })
+
+    // Botones para eliminar producto
+    const botonesEliminar = document.querySelectorAll('.btn-eliminar')
+    botonesEliminar.forEach(boton => {
+        boton.addEventListener('click', () => {
+            const id = boton.dataset.id
+            const index = carrito.findIndex(item => item.id == id)
+            if (index !== -1) {
+                carrito.splice(index, 1)
+                guardarCarrito()
+                actualizarSidebarCarrito()
+            }
+        })
+    })
 }
 
 // EVENTOS
@@ -234,6 +283,7 @@ async function iniciarApp() {
         data = await fetchProducts()
         cargarProductos(data, dataCategories)
         recuperarCarrito()
+        actualizarSidebarCarrito() // para mostrar carrito si ya hay productos guardados
     } catch (error) {
         console.error('Error iniciando la app:', error)
         container.innerHTML = crearCardError()

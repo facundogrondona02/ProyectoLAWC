@@ -703,10 +703,30 @@ button:disabled:active {
     animation: spin 1s ease infinite;
 }
 
-.img-carrito{
-    width: 52px;
-    height: 52px;
+/* Sidebar del carrito */
+.sidebar-carrito {
+    position: fixed;
+    top: 0;
+    right: -100%; /* Oculto fuera de pantalla */
+    width: 350px;
+    height: 100%;
+    background-color: #fff;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.3);
+    padding: 1rem;
+    transition: right 0.3s ease-in-out;
+    z-index: 1050;
+    overflow-y: auto;
 }
+
+.sidebar-carrito.show {
+    right: 0; /* Lo trae a la vista */
+}
+
+
+.sidebar-carrito.open {
+    right: 0;
+}
+
 @keyframes spin {
     0% {
         transform: rotate(0deg);
