@@ -111,11 +111,17 @@ function cargarProductos(arrayProductos) {
 // EVENTOS
 buttonCarrito.addEventListener('click', () => {
     if (carrito.length > 0) {
-        location.href = "checkout.html"
+        sidebarCarrito.classList.add('show');
+        actualizarSidebarCarrito(); // actualiza el contenido al abrir
     } else {
-        alert('⛔️ Agrega al menos un producto al carrito.')
+        mostrarToast('⛔️ Tu carrito está vacío.', 'danger');
     }
-})
+});
+
+cerrarCarrito.addEventListener('click', () => {
+    sidebarCarrito.classList.remove('show');
+});
+
 
 inputSearch.addEventListener('search', () => {
     let valor = inputSearch.value.trim().toLowerCase()
