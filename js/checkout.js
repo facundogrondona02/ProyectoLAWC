@@ -1,5 +1,5 @@
 // VARIABLES
-const carrito = [];
+let carrito = [];
 
 const precioTotal = document.querySelector("table tfoot td#totalPrice span");
 const btnComprar = document.querySelector("button#btnBuy");
@@ -11,59 +11,53 @@ const btnDelete = document.querySelector("#btnDel");
 
 // LÓGICA
 function recuperarCarrito() {
-    const recuperarCarrito = JSON.parse(localStorage.getItem("shoppingKart"));
-
-    if (Array.isArray(recuperarCarrito)) {
-        carrito.push(...recuperarCarrito);
+    const datos = JSON.parse(localStorage.getItem("shoppingKart"));
+    if (Array.isArray(datos)) {
+        carrito = datos;
     }
 }
 
 function calcularTotalCarrito() {
     // if (carrito.length > 0) {
-        precioTotal.textContent =
-            carrito.reduce((acc, prod) => acc + prod.price, 0).toFixed(2) || 0.0;
+        const total = carrito.reduce((acc, prod) => acc + prod.price * prod.cantidad, 0);
+        precioTotal.textContent = total.toFixed(2);   carrito.reduce((acc, prod) => acc + prod.price, 0).toFixed(2) || 0.0;
     // }
 }
 
 
-function crearFilaCarrito(prod) {
-    return `<tr>
-                <td id="pImagen"><img class="img-carrito" src=${prod.image}> </img></td>
-                <td id="nombre">${prod.title}</td>
-                <td id="price">$ ${prod.price.toFixed(2)}</td>
-                <td id="delButton" 
-                    data-codigo="${prod.id}"
-                    title="Click para eliminar">
-                       <button id="btnDel" onclick="eliminarProducto('${prod.id}')">
-                        ⛔️
-                       </button>
-                </td>
-            </tr>`;
+function crearFilaCarrito(prod, index) {
+    return `
+        <tr>
+            <td><img class="img-carrito" src="${prod.image}" alt="${prod.title}" width="40"></td>
+            <td>${prod.title}</td>
+            <td>$${(prod.price * prod.cantidad).toFixed(2)} (${prod.cantidad} x $${prod.price})</td>
+            <td>
+                <button class="btnEliminar" data-index="${index}" title="Quitar producto">⛔️</button>
+            </td>
+        </tr>
+    `;
 }
-const eliminarProducto = (codigo) => {
-    console.log(codigo)
-    console.log(carrito[0].id);
-    const index = carrito.findIndex((prod) => prod.id == codigo);
-    console.log(index);
-    const res = confirm("Estas seguro que deseas eliminar el producto?","Si", "No");
-    if(res){
-        if (index !== -1) {
-            carrito.splice(index, 1);
-            localStorage.setItem("shoppingKart", JSON.stringify(carrito));
-            tableBody.innerHTML = "";
-            mostrarCarrito();
-        }
-    }
-
-    calcularTotalCarrito();
-
-};
+function agregarEventosEliminar() {
+    const botonesEliminar = document.querySelectorAll(".btnEliminar");
+    botonesEliminar.forEach(btn => {
+        btn.addEventListener("click", () => {
+            const index = parseInt(btn.getAttribute("data-index"));
+            const confirmacion = confirm("¿Estás seguro de que querés eliminar este producto?");
+            if (confirmacion) {
+                carrito.splice(index, 1);
+                localStorage.setItem("shoppingKart", JSON.stringify(carrito));
+                mostrarCarrito();
+            }
+        });
+    });
+}
 function mostrarCarrito() {
     if (carrito.length > 0) {
         tableBody.innerHTML = "";
-        carrito.forEach((prod) => {
-            tableBody.innerHTML += crearFilaCarrito(prod);
-        });
+        carrito.forEach((prod, index) => {
+        tableBody.innerHTML += crearFilaCarrito(prod, index);
+    });
+    agregarEventosEliminar();
         calcularTotalCarrito();
         btnComprar.removeAttribute("disabled");
     }
@@ -77,10 +71,20 @@ mostrarCarrito();
 btnRetornar.addEventListener("click", () => (location.href = "index.html"));
 
 btnComprar.addEventListener("click", () => {
-    alert("🛍️ Compra finalizada. Muchas gracias!");
+    ToastIt.now({
+        message: "✅ Compra finalizada. ¡Muchas gracias!",
+        style: "success",
+        close: true,
+        duration: 3000,
+        position: "bottom-center"
+    });
+
     localStorage.removeItem("shoppingKart");
     carrito.length = 0;
-    setTimeout(() => btnRetornar.click(), 2500);
+
+    // Redirigir después de que el toast desaparezca
+    setTimeout(() => btnRetornar.click(), 3000);
 });
+
 
 
