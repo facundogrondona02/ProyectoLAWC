@@ -2,21 +2,23 @@
 import { fetchProducts } from './fetchProducts.js'
 import { fetchProductsCategories } from './fetchProductsCategories.js'
 
-// DOM: enlaces y variables globales
+// DOM y variables globales
 const categorias = []
 const carrito = []
 const container = document.querySelector('div.card-container')
-const buttonCarrito = document.querySelector('img[alt="Carrito"]')
+const buttonCarrito = document.getElementById('btnCarrito')
+const btnCheckout = document.getElementById("btnCheckout")
 const inputSearch = document.querySelector('input#inputSearch')
 const filterCategories = document.querySelector('div.categories-filter')
-let data = [] // importante definirla arriba
-let dataCategories = [] // importante definirla arriba
+const sidebarCarrito = document.getElementById('sidebarCarrito')
+const cerrarCarrito = document.getElementById('cerrarCarrito')
+const contenidoCarrito = document.getElementById('contenidoCarrito')
+let data = []
+let dataCategories = []
 let categoriaSeleccion = ""
-let arrayDeFiltros = [
-   {producto: "", categoria: ""},
-] 
+let arrayDeFiltros = [{ producto: "", categoria: "" }]
 
-
+// FUNCIONES
 function crearCardHTML(producto) {
     return `
     <div class="col">
@@ -42,15 +44,12 @@ function crearCardHTML(producto) {
                 </div>
             </div>
         </div>
-        
-
+    </div>
     `
 }
 
-
 const modalTemplate = (producto) => {
-  return   `
-            <!-- Modal -->
+    return `
         <div class="modal fade" id="modal-${producto.id}" tabindex="-1" aria-labelledby="modalLabel-${producto.id}" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
@@ -70,24 +69,19 @@ const modalTemplate = (producto) => {
                 </div>
             </div>
         </div>
-    </div>
     `
 }
+
 function llenarFiltroCategorias(categoria) {
-    return (
-        `
+    return `
         <select class="form-select" id="selectCategorias" aria-label="Default select example">
             <option ${categoriaSeleccion === "" ? "selected" : ""}>Seleccione una categoría</option>
             ${categoria.map((cat) => 
                 `<option value="${cat}" ${categoriaSeleccion === cat ? "selected" : ""}>${cat}</option>`
             ).join('')}
         </select>
-        `
-    )
+    `
 }
-
-
-
 
 function crearCardError() {
     return `<div class="col-12">
@@ -99,11 +93,7 @@ function crearCardError() {
 }
 
 function mostrarToast(mensaje, estilo) {
-    ToastIt.now({
-        style: estilo,
-        message: mensaje,
-        close: true,
-    })
+    ToastIt.now({ style: estilo, message: mensaje, close: true })
 }
 
 function agregarEventosClick() {
@@ -113,9 +103,15 @@ function agregarEventosClick() {
             boton.addEventListener('click', () => {
                 let productoElegido = data.find((datita) => datita.id == boton.dataset.codigo)
                 if (productoElegido !== undefined) {
-                    carrito.push(productoElegido)
+                    const existente = carrito.find((item) => item.id === productoElegido.id)
+                    if (existente) {
+                        existente.cantidad += 1
+                    } else {
+                        carrito.push({ ...productoElegido, cantidad: 1 })
+                    }
                     mostrarToast(`'${productoElegido.title}' agregado al carrito`, 'success')
                     guardarCarrito()
+                    actualizarSidebarCarrito()
                 } else {
                     alert("⛔️ No se pudo agregar el producto al carrito.")
                 }
@@ -123,7 +119,6 @@ function agregarEventosClick() {
         })
     }
 }
-
 
 function guardarCarrito() {
     if (carrito.length > 0) {
@@ -140,14 +135,11 @@ function recuperarCarrito() {
 
 function cargarProductos(arrayProductos, categorias) {
     const loader = document.querySelector('.loader')
-    if (loader) loader.remove() 
+    if (loader) loader.remove()
 
-        console.log(categorias, "categorias")
-         
-        if(categorias.length > 0) {
-            filterCategories.innerHTML = llenarFiltroCategorias(categorias)
-        }
-
+    if (categorias.length > 0) {
+        filterCategories.innerHTML = llenarFiltroCategorias(categorias)
+    }
 
     if (arrayProductos.length > 0) {
         container.innerHTML = ''
@@ -165,14 +157,12 @@ function cargarProductos(arrayProductos, categorias) {
 function filtrarProductos() {
     let productosFiltrados = data
 
-    // Filtro por producto
     if (arrayDeFiltros[0].producto !== "") {
         productosFiltrados = productosFiltrados.filter((producto) =>
             producto.title.toLowerCase().includes(arrayDeFiltros[0].producto)
         )
     }
 
-    // Filtro por categoría
     if (arrayDeFiltros[0].categoria !== "" && arrayDeFiltros[0].categoria !== "Seleccione una categoría") {
         productosFiltrados = productosFiltrados.filter((producto) =>
             producto.category.toLowerCase().includes(arrayDeFiltros[0].categoria.toLowerCase())
@@ -182,33 +172,65 @@ function filtrarProductos() {
     if (productosFiltrados.length > 0) {
         cargarProductos(productosFiltrados, dataCategories)
     } else {
-        mostrarToast(`no se encontro el producto`, 'error')
-        cargarProductos(data, dataCategories) // o mostrar el mensaje de error
+        mostrarToast(`No se encontró el producto`, 'error')
+        cargarProductos(data, dataCategories)
     }
 }
 
+function actualizarSidebarCarrito() {
+    if (carrito.length === 0) {
+        contenidoCarrito.innerHTML = `<p class="text-muted">Tu carrito está vacío.</p>`
+        const totalCarrito = document.getElementById('totalCarrito')
+        if (totalCarrito) totalCarrito.textContent = 'Total: $0.00'
+        return
+    }
 
-
+    contenidoCarrito.innerHTML = carrito.map(item => `
+        <div class="item-carrito mb-3 border-bottom pb-3 d-flex align-items-center">
+            <img src="${item.image}" alt="${item.title}" width="50" height="50" class="me-2">
+            <div class="flex-grow-1">
+                <strong>${item.title}</strong>
+                <div class="d-flex align-items-center mt-1">
+                    <button class="btn btn-sm btn-outline-secondary btn-restar" data-id="${item.id}" ${item.cantidad === 1 ? 'disabled' : ''}>-</button>
+                    <span class="mx-2">${item.cantidad}</span>
+                    <button class="btn btn-sm btn-outline-secondary btn-sumar" data-id="${item.id}">+</button>
+                    <button class="btn btn-sm btn-danger ms-3 btn-eliminar" data-id="${item.id}">Eliminar</button>
+                </div>
+                <div class="mt-1 text-muted">$${(item.price * item.cantidad).toFixed(2)}</div>
+            </div>
+        </div>
+    `).join('')
+}
 
 // EVENTOS
 inputSearch.addEventListener('input', (event) => {
-    console.log(event.target.value)
-    arrayDeFiltros[0].producto = inputSearch.value.trim().toLowerCase() 
+    arrayDeFiltros[0].producto = inputSearch.value.trim().toLowerCase()
     filtrarProductos()
-
 })
 
-
 filterCategories.addEventListener('change', (event) => {
-    arrayDeFiltros[0].categoria = event.target.value 
+    arrayDeFiltros[0].categoria = event.target.value
     categoriaSeleccion = event.target.value
     filtrarProductos()
-});
+})
+
+buttonCarrito.addEventListener('click', () => {
+    if (carrito.length > 0) {
+        sidebarCarrito.classList.add('show')
+        actualizarSidebarCarrito()
+    } else {
+        mostrarToast('⛔️ Tu carrito está vacío.', 'danger')
+    }
+})
+
+cerrarCarrito.addEventListener('click', () => {
+    sidebarCarrito.classList.remove('show')
+})
 
 // FUNCIÓN PRINCIPAL
 async function iniciarApp() {
     try {
-        dataCategories= await fetchProductsCategories()
+        dataCategories = await fetchProductsCategories()
         data = await fetchProducts()
         cargarProductos(data, dataCategories)
         recuperarCarrito()
