@@ -9,7 +9,7 @@ const container = document.querySelector('div.card-container')
 const buttonCarrito = document.querySelector('div.shoping-cart')
 */
 const buttonCarrito = document.getElementById('btnCarrito') //id del HTML
-
+const btnCheckout = document.getElementById("btnCheckout");
 const inputSearch = document.querySelector('input#inputSearch')
 const seccionCategorias = document.querySelector('article.categories')
 const sidebarCarrito = document.getElementById('sidebarCarrito')
@@ -284,3 +284,14 @@ async function iniciarApp() {
 }
 
 iniciarApp();
+btnCheckout.addEventListener("click", () => {
+    if (carrito.length > 0) {
+        location.href = "checkout.html";
+    } else {
+        ToastIt.now({
+            message: "⚠️ El carrito está vacío.",
+            style: "warning",
+            close: true,
+        });
+    }
+});
