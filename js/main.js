@@ -134,6 +134,81 @@ inputSearch.addEventListener('search', () => {
     }
 })
 
+
+function actualizarSidebarCarrito() {
+    if (carrito.length === 0) {
+        contenidoCarrito.innerHTML = `<p class="text-muted">Tu carrito está vacío.</p>`
+        const totalCarrito = document.getElementById('totalCarrito');
+        if (totalCarrito) totalCarrito.textContent = 'Total: $0.00'
+        return
+    }
+
+    contenidoCarrito.innerHTML = carrito.map(item => `
+        <div class="item-carrito mb-3 border-bottom pb-3 d-flex align-items-center">
+            <img src="${item.image}" alt="${item.title}" width="50" height="50" class="me-2">
+            <div class="flex-grow-1">
+                <strong>${item.title}</strong>
+                <div class="d-flex align-items-center mt-1">
+                    <button class="btn btn-sm btn-outline-secondary btn-restar" data-id="${item.id}" ${item.cantidad === 1 ? 'disabled' : ''}>-</button>
+                    <span class="mx-2">${item.cantidad}</span>
+                    <button class="btn btn-sm btn-outline-secondary btn-sumar" data-id="${item.id}">+</button>
+                    <button class="btn btn-sm btn-danger ms-3 btn-eliminar" data-id="${item.id}">Eliminar</button>
+                </div>
+                <div class="mt-1 text-muted">$${(item.price * item.cantidad).toFixed(2)}</div>
+            </div>
+        </div>
+    `).join('')
+
+    // Botones de restar
+    document.querySelectorAll('.btn-restar').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const id = parseInt(btn.dataset.id)
+            const producto = carrito.find(p => p.id === id)
+            if (producto && producto.cantidad > 1) {
+                producto.cantidad--
+                guardarCarrito()
+                actualizarSidebarCarrito()
+            }
+        })
+    })
+
+    // Botones de sumar
+    document.querySelectorAll('.btn-sumar').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const id = parseInt(btn.dataset.id)
+            const producto = carrito.find(p => p.id === id)
+            if (producto) {
+                producto.cantidad++
+                guardarCarrito()
+                actualizarSidebarCarrito()
+            }
+        })
+    })
+
+    // Botones de eliminar
+    document.querySelectorAll('.btn-eliminar').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const id = parseInt(btn.dataset.id)
+            const index = carrito.findIndex(p => p.id === id)
+            if (index !== -1) {
+                carrito.splice(index, 1)
+                guardarCarrito()
+                actualizarSidebarCarrito()
+            }
+        })
+    })
+
+    // Calcular total
+    const total = carrito.reduce((sum, item) => sum + item.price * item.cantidad, 0)
+
+    // Mostrar total
+    const totalCarrito = document.getElementById('totalCarrito')
+    if (totalCarrito) {
+        totalCarrito.textContent = `Total: $${total.toFixed(2)}`
+    }
+}
+
+/* Funcion vieja de actualizar carrito
 function actualizarSidebarCarrito() {
     if (carrito.length === 0) {
         contenidoCarrito.innerHTML = `<p class="text-muted">Tu carrito está vacío.</p>`
@@ -193,7 +268,7 @@ function actualizarSidebarCarrito() {
         })
     })
 }
-
+*/ 
 
 let data = []; // importante definirla arriba
 
