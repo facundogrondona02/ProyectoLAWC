@@ -8,6 +8,7 @@ const carrito = []
 const container = document.querySelector('div.card-container')
 const buttonCarrito = document.getElementById('btnCarrito')
 const btnCheckout = document.getElementById("btnCheckout")
+const btnEliminarCarrito = document.getElementById('btnEliminarCarrito');
 const inputSearch = document.querySelector('input#inputSearch')
 const filterCategories = document.querySelector('div.categories-filter')
 const sidebarCarrito = document.getElementById('sidebarCarrito')
@@ -203,6 +204,11 @@ function actualizarSidebarCarrito() {
         </div>
     `).join('')
 
+    const totalCarrito = document.getElementById('totalCarrito');
+if (totalCarrito) {
+    const total = carrito.reduce((sum, item) => sum + (item.price * item.cantidad), 0);
+    totalCarrito.textContent = `Total: $${total.toFixed(2)}`;
+}
     // Agregar eventos a los botones del carrito después de renderizar
     agregarEventosBotonesCarrito()
 }
@@ -275,6 +281,29 @@ buttonCarrito.addEventListener('click', () => {
 cerrarCarrito.addEventListener('click', () => {
     sidebarCarrito.classList.remove('show')
 })
+btnCheckout.addEventListener('click', () => {
+    if (carrito.length === 0) {
+        mostrarToast('⛔️ Tu carrito está vacío.', 'danger');
+        return;
+    }
+    carrito.length = 0;
+    guardarCarrito();
+    actualizarSidebarCarrito();
+    sidebarCarrito.classList.remove('show');
+    mostrarToast('✅ Compra realizada con éxito.', 'success');
+});
+
+btnEliminarCarrito.addEventListener('click', () => {
+    if (carrito.length === 0) {
+        mostrarToast('⛔️ Tu carrito ya está vacío.', 'danger');
+        return;
+    }
+    carrito.length = 0;
+    guardarCarrito();
+    actualizarSidebarCarrito();
+    sidebarCarrito.classList.remove('show');
+    mostrarToast('🗑️ Todos los productos fueron eliminados.', 'warning');
+});
 
 // FUNCIÓN PRINCIPAL
 async function iniciarApp() {
