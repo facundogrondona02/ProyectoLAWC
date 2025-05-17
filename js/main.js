@@ -7,7 +7,7 @@ const categorias = []
 const carrito = []
 const container = document.querySelector('div.card-container')
 const buttonCarrito = document.getElementById('btnCarrito')
-const btnCheckout = document.getElementById("btnCheckout")
+const  btnCheckout = document.getElementById("btnCheckout")
 const btnEliminarCarrito = document.getElementById('btnEliminarCarrito');
 const inputSearch = document.querySelector('input#inputSearch')
 const filterCategories = document.querySelector('div.categories-filter')
@@ -287,9 +287,7 @@ btnCheckout.addEventListener('click', () => {
         return;
     }
     carrito.length = 0;
-    guardarCarrito();
-    actualizarSidebarCarrito();
-    sidebarCarrito.classList.remove('show');
+    location.href = 'checkout.html';
     mostrarToast('✅ Compra realizada con éxito.', 'success');
 });
 
