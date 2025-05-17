@@ -11,7 +11,6 @@ function filtrarProductosPorNombre() {
 
     // Normalizar texto de búsqueda
     let productosEncontrados = productos.filter((producto)=> producto.nombre.toLowerCase().includes(valor) )
-    console.log(productosEncontrados)
 }
 
 /*
